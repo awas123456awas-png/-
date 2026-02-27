@@ -3,121 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🔥 Sba3 Fwazer Ultimate</title>
+    <title>Sba3 Fwazer Pro - النسخة المليانة</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #e84118; --dark: #1e1e2f; --success: #27ae60; --wrong: #c23616; }
-        body { font-family: 'Tajawal', sans-serif; background: #0a0a12; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: #1e1e2f; padding: 30px; border-radius: 20px; width: 90%; max-width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        button { padding: 15px 25px; margin: 10px; border-radius: 10px; border: none; cursor: pointer; font-size: 16px; font-weight: bold; transition: 0.3s; color: white; }
-        .btn-main { background: var(--primary); width: 80%; }
-        .btn-level { background: #353b48; width: 30%; }
-        button:hover { transform: scale(1.05); filter: brightness(1.2); }
-        
-        .answerBtn { display: block; width: 100%; margin: 10px 0; background: #2f3640; }
-        .correct { background: var(--success) !important; }
-        .wrong { background: var(--wrong) !important; }
+        /* CSS Variables للتحكم الكامل بالتصميم */
+        :root {
+            --bg-color: #0f0c29;
+            --card-bg: #1e1e2f;
+            --accent: #ff4757;
+            --text-color: #ffffff;
+            --success: #2ecc71;
+            --fail: #e74c3c;
+        }
 
-        #gameArea, #levelScreen, #resultScreen { display: none; }
-        #timer { font-size: 40px; color: var(--primary); margin: 15px 0; }
+        body { font-family: 'Tajawal', sans-serif; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: var(--text-color); margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+
+        .app-wrapper { width: 95%; max-width: 600px; background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+
+        /* التصنيفات */
+        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .btn-category { padding: 20px; background: #353b48; border: none; border-radius: 10px; color: white; font-size: 18px; cursor: pointer; transition: 0.3s; }
+        .btn-category:hover { background: var(--accent); }
+
+        /* منطقة اللعبة */
+        .hidden { display: none; }
+        .question-box { font-size: 24px; margin-bottom: 30px; }
+        .answer-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: transparent; border: 2px solid #444; border-radius: 10px; color: white; font-size: 18px; cursor: pointer; transition: 0.3s; }
+        .answer-btn:hover { background: #353b48; border-color: var(--accent); }
+        
+        /* مؤشرات */
+        .progress-bar { height: 8px; background: #333; border-radius: 4px; margin-bottom: 20px; }
+        .progress-fill { height: 100%; background: var(--accent); width: 0%; border-radius: 4px; transition: 0.3s; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <div id="startScreen">
-        <h1>🔥 Sba3 Fwazer</h1>
-        <p>أعلى نتيجة: <span id="highScoreText">0</span></p>
-        <button class="btn-main" onclick="showLevelScreen()">ابدأ التحدي</button>
+<div class="app-wrapper">
+    <div id="start-screen">
+        <h1>🎮 Sba3 Fwazer Pro</h1>
+        <p>اختر التصنيف وابدأ الاختبار:</p>
+        <div class="category-grid">
+            <button class="btn-category" onclick="initGame('tech')">🚀 تقنية</button>
+            <button class="btn-category" onclick="initGame('history')">📜 تاريخ</button>
+            <button class="btn-category" onclick="initGame('sports')">⚽ رياضة</button>
+            <button class="btn-category" onclick="initGame('geo')">🌍 جغرافيا</button>
+        </div>
     </div>
 
-    <div id="levelScreen">
-        <h3>اختر مستوى الصعوبة</h3>
-        <button class="btn-level" onclick="selectLevel('easy')">سهل</button>
-        <button class="btn-level" onclick="selectLevel('medium')">وسط</button>
-        <button class="btn-level" onclick="selectLevel('hard')">صعب</button>
+    <div id="game-screen" class="hidden">
+        <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
+        <div id="question-text" class="question-box"></div>
+        <div id="answer-container"></div>
     </div>
 
-    <div id="gameArea">
-        <div id="timer">20</div>
-        <h3 id="question">السؤال هنا</h3>
-        <div id="answers"></div>
-    </div>
-
-    <div id="resultScreen">
-        <h2>انتهت اللعبة!</h2>
-        <p style="font-size: 24px;">نتيجتك: <span id="finalScore">0</span></p>
-        <button class="btn-main" onclick="location.reload()">الرئيسية</button>
+    <div id="result-screen" class="hidden">
+        <h2>انتهى الاختبار!</h2>
+        <div id="final-stats"></div>
+        <button class="btn-category" style="width: 100%;" onclick="location.reload()">الرئيسية</button>
     </div>
 </div>
 
 <script>
-    const data = {
-        easy: [{ q: "عاصمة السعودية؟", options: ["الرياض", "جدة", "مكة"], a: "الرياض" }],
-        medium: [{ q: "عدد كواكب المجموعة الشمسية؟", options: ["7", "8", "9"], a: "8" }],
-        hard: [{ q: "من مخترع المصباح؟", options: ["أديسون", "تسلا", "نيوتن"], a: "أديسون" }]
+    /** * قاعدة بيانات الأسئلة (يمكنك زيادتها بسهولة)
+     */
+    const questionsDb = {
+        tech: [
+            { q: "ما هي لغة البرمجة الأكثر استخداماً للويب؟", o: ["Python", "JavaScript", "C++"], a: "JavaScript" },
+            { q: "ماذا يعني اختصار CPU؟", o: ["Central Unit", "Central Processing Unit", "Computer Processor"], a: "Central Processing Unit" }
+        ],
+        history: [
+            { q: "في أي عام تأسست المملكة العربية السعودية؟", o: ["1932", "1920", "1950"], a: "1932" }
+        ],
+        sports: [
+            { q: "كم عدد لاعبي فريق كرة القدم في الملعب؟", o: ["10", "11", "9"], a: "11" }
+        ],
+        geo: [
+            { q: "ما هي أكبر قارة في العالم؟", o: ["أفريقيا", "آسيا", "أوروبا"], a: "آسيا" }
+        ]
     };
 
-    let score = 0, timeLeft, timer, currentLevel, currentIdx;
+    // متغيرات الحالة (State Management)
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let score = 0;
 
-    // تحميل أعلى نتيجة من المتصفح
-    document.getElementById("highScoreText").innerText = localStorage.getItem("highScore") || 0;
-
-    function showLevelScreen() {
-        document.getElementById("startScreen").style.display = "none";
-        document.getElementById("levelScreen").style.display = "block";
+    function initGame(category) {
+        currentQuestions = questionsDb[category];
+        currentIndex = 0;
+        score = 0;
+        document.getElementById('start-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        renderQuestion();
     }
 
-    function selectLevel(lvl) {
-        currentLevel = lvl;
-        currentIdx = 0;
-        document.getElementById("levelScreen").style.display = "none";
-        document.getElementById("gameArea").style.display = "block";
-        loadQuestion();
-    }
+    function renderQuestion() {
+        if (currentIndex >= currentQuestions.length) return showResult();
 
-    function loadQuestion() {
-        if(currentIdx >= data[currentLevel].length) return endGame();
+        // تحديث شريط التقدم
+        const progress = ((currentIndex + 1) / currentQuestions.length) * 100;
+        document.getElementById('progress').style.width = progress + "%";
+
+        const q = currentQuestions[currentIndex];
+        document.getElementById('question-text').innerText = q.q;
         
-        timeLeft = 20;
-        document.getElementById("timer").innerText = timeLeft;
-        const qObj = data[currentLevel][currentIdx];
-        document.getElementById("question").innerText = qObj.q;
+        const container = document.getElementById('answer-container');
+        container.innerHTML = "";
         
-        let html = "";
-        qObj.options.forEach(opt => {
-            html += `<button class="answerBtn" onclick="check('${opt}', this)">${opt}</button>`;
+        q.o.forEach(option => {
+            const btn = document.createElement('button');
+            btn.className = "answer-btn";
+            btn.innerText = option;
+            btn.onclick = () => handleAnswer(option, q.a);
+            container.appendChild(btn);
         });
-        document.getElementById("answers").innerHTML = html;
-        
-        timer = setInterval(() => {
-            timeLeft--;
-            document.getElementById("timer").innerText = timeLeft;
-            if(timeLeft <= 0) endGame();
-        }, 1000);
     }
 
-    function check(ans, btn) {
-        clearInterval(timer);
-        if(ans === data[currentLevel][currentIdx].a) {
-            btn.classList.add('correct');
-            score += 10;
-        } else {
-            btn.classList.add('wrong');
-        }
-        setTimeout(() => { currentIdx++; loadQuestion(); }, 1000);
+    function handleAnswer(selected, correct) {
+        if (selected === correct) score += 10;
+        currentIndex++;
+        renderQuestion();
     }
 
-    function endGame() {
-        clearInterval(timer);
-        document.getElementById("gameArea").style.display = "none";
-        document.getElementById("resultScreen").style.display = "block";
-        document.getElementById("finalScore").innerText = score;
-        
-        // حفظ النتيجة إذا كانت الأعلى
-        let high = localStorage.getItem("highScore") || 0;
-        if(score > high) localStorage.setItem("highScore", score);
+    function showResult() {
+        document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('result-screen').classList.remove('hidden');
+        document.getElementById('final-stats').innerHTML = `
+            <p>نقاطك النهائية: ${score}</p>
+            <p>عدد الأسئلة: ${currentQuestions.length}</p>
+        `;
     }
 </script>
 
