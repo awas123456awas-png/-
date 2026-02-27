@@ -2,135 +2,122 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sba3 Fwazer Pro - النسخة المليانة</title>
+    <title>Sba3 Fwazer: التحدي الثنائي</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* CSS Variables للتحكم الكامل بالتصميم */
-        :root {
-            --bg-color: #0f0c29;
-            --card-bg: #1e1e2f;
-            --accent: #ff4757;
-            --text-color: #ffffff;
-            --success: #2ecc71;
-            --fail: #e74c3c;
-        }
-
-        body { font-family: 'Tajawal', sans-serif; background: linear-gradient(135deg, #0f0c29, #302b63, #24243e); color: var(--text-color); margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-
-        .app-wrapper { width: 95%; max-width: 600px; background: var(--card-bg); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
-
-        /* التصنيفات */
-        .category-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
-        .btn-category { padding: 20px; background: #353b48; border: none; border-radius: 10px; color: white; font-size: 18px; cursor: pointer; transition: 0.3s; }
-        .btn-category:hover { background: var(--accent); }
-
-        /* منطقة اللعبة */
-        .hidden { display: none; }
-        .question-box { font-size: 24px; margin-bottom: 30px; }
-        .answer-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: transparent; border: 2px solid #444; border-radius: 10px; color: white; font-size: 18px; cursor: pointer; transition: 0.3s; }
-        .answer-btn:hover { background: #353b48; border-color: var(--accent); }
+        :root { --bg: #0f0c29; --accent: #ff4757; --card: #1e1e2f; --team1: #3498db; --team2: #e67e22; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: white; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .app-wrapper { width: 95%; max-width: 600px; background: var(--card); padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
         
-        /* مؤشرات */
-        .progress-bar { height: 8px; background: #333; border-radius: 4px; margin-bottom: 20px; }
-        .progress-fill { height: 100%; background: var(--accent); width: 0%; border-radius: 4px; transition: 0.3s; }
+        .hidden { display: none; }
+        input { width: 80%; padding: 15px; margin: 10px 0; border-radius: 10px; border: none; font-size: 16px; text-align: center; }
+        button { padding: 15px 30px; margin: 10px; border-radius: 10px; border: none; cursor: pointer; font-size: 18px; color: white; background: var(--accent); transition: 0.3s; }
+        
+        .score-board { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; }
+        .answer-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: #2f3640; border: 2px solid #444; border-radius: 10px; color: white; }
+        .answer-btn:hover { border-color: var(--accent); }
     </style>
 </head>
 <body>
 
 <div class="app-wrapper">
     <div id="start-screen">
-        <h1>🎮 Sba3 Fwazer Pro</h1>
-        <p>اختر التصنيف وابدأ الاختبار:</p>
-        <div class="category-grid">
-            <button class="btn-category" onclick="initGame('tech')">🚀 تقنية</button>
-            <button class="btn-category" onclick="initGame('history')">📜 تاريخ</button>
-            <button class="btn-category" onclick="initGame('sports')">⚽ رياضة</button>
-            <button class="btn-category" onclick="initGame('geo')">🌍 جغرافيا</button>
-        </div>
+        <h1>🔥 Sba3 Fwazer</h1>
+        <button onclick="showSetup()" style="padding: 25px 50px; font-size: 28px;">جاهز للتحدي؟</button>
+    </div>
+
+    <div id="setup-screen" class="hidden">
+        <h2>أسماء الفرق</h2>
+        <input type="text" id="t1" placeholder="اسم الفريق الأول">
+        <input type="text" id="t2" placeholder="اسم الفريق الثاني">
+        <button onclick="startGame()">بدء التحدي</button>
     </div>
 
     <div id="game-screen" class="hidden">
-        <div class="progress-bar"><div id="progress" class="progress-fill"></div></div>
-        <div id="question-text" class="question-box"></div>
-        <div id="answer-container"></div>
-    </div>
-
-    <div id="result-screen" class="hidden">
-        <h2>انتهى الاختبار!</h2>
-        <div id="final-stats"></div>
-        <button class="btn-category" style="width: 100%;" onclick="location.reload()">الرئيسية</button>
+        <div class="score-board">
+            <span id="name1"></span>: <span id="score1">0</span> | <span id="name2"></span>: <span id="score2">0</span>
+        </div>
+        <h3 id="turn-indicator">دور الفريق: -</h3>
+        <div id="cat-selection" class="hidden">
+            <p>اختر القسم:</p>
+            <button onclick="selectCategory('tech')">💻 تقنية</button>
+            <button onclick="selectCategory('history')">📜 تاريخ</button>
+        </div>
+        <div id="question-area" class="hidden">
+            <div id="timer" style="font-size: 30px; color: var(--accent);">15</div>
+            <h2 id="q-text"></h2>
+            <div id="answers"></div>
+        </div>
     </div>
 </div>
 
 <script>
-    /** * قاعدة بيانات الأسئلة (يمكنك زيادتها بسهولة)
-     */
-    const questionsDb = {
-        tech: [
-            { q: "ما هي لغة البرمجة الأكثر استخداماً للويب؟", o: ["Python", "JavaScript", "C++"], a: "JavaScript" },
-            { q: "ماذا يعني اختصار CPU؟", o: ["Central Unit", "Central Processing Unit", "Computer Processor"], a: "Central Processing Unit" }
-        ],
-        history: [
-            { q: "في أي عام تأسست المملكة العربية السعودية؟", o: ["1932", "1920", "1950"], a: "1932" }
-        ],
-        sports: [
-            { q: "كم عدد لاعبي فريق كرة القدم في الملعب؟", o: ["10", "11", "9"], a: "11" }
-        ],
-        geo: [
-            { q: "ما هي أكبر قارة في العالم؟", o: ["أفريقيا", "آسيا", "أوروبا"], a: "آسيا" }
-        ]
+    const db = {
+        tech: [{q: "من هو مؤسس آبل؟", o: ["جوبز", "غيتس", "ماسك"], a: "جوبز"}],
+        history: [{q: "كم استمرت حرب البسوس؟", o: ["40 سنة", "10 سنين", "100 سنة"], a: "40 سنة"}]
     };
 
-    // متغيرات الحالة (State Management)
-    let currentQuestions = [];
-    let currentIndex = 0;
-    let score = 0;
+    let game = { t1: "", t2: "", s1: 0, s2: 0, turn: 1, timer: 15, interval: null };
 
-    function initGame(category) {
-        currentQuestions = questionsDb[category];
-        currentIndex = 0;
-        score = 0;
-        document.getElementById('start-screen').classList.add('hidden');
+    function showSetup() { document.getElementById('start-screen').classList.add('hidden'); document.getElementById('setup-screen').classList.remove('hidden'); }
+
+    function startGame() {
+        game.t1 = document.getElementById('t1').value || "الفريق 1";
+        game.t2 = document.getElementById('t2').value || "الفريق 2";
+        document.getElementById('name1').innerText = game.t1;
+        document.getElementById('name2').innerText = game.t2;
+        document.getElementById('setup-screen').classList.add('hidden');
         document.getElementById('game-screen').classList.remove('hidden');
-        renderQuestion();
+        renderTurn();
     }
 
-    function renderQuestion() {
-        if (currentIndex >= currentQuestions.length) return showResult();
+    function renderTurn() {
+        document.getElementById('turn-indicator').innerText = "دور: " + (game.turn === 1 ? game.t1 : game.t2);
+        document.getElementById('cat-selection').classList.remove('hidden');
+        document.getElementById('question-area').classList.add('hidden');
+    }
 
-        // تحديث شريط التقدم
-        const progress = ((currentIndex + 1) / currentQuestions.length) * 100;
-        document.getElementById('progress').style.width = progress + "%";
+    function selectCategory(cat) {
+        document.getElementById('cat-selection').classList.add('hidden');
+        document.getElementById('question-area').classList.remove('hidden');
+        loadQuestion(db[cat][0]); // بسيط للاختبار، يمكنك تطوير العشوائية هنا
+    }
 
-        const q = currentQuestions[currentIndex];
-        document.getElementById('question-text').innerText = q.q;
-        
-        const container = document.getElementById('answer-container');
-        container.innerHTML = "";
-        
-        q.o.forEach(option => {
+    function loadQuestion(qObj) {
+        document.getElementById('q-text').innerText = qObj.q;
+        const cont = document.getElementById('answers'); cont.innerHTML = "";
+        qObj.o.forEach(opt => {
             const btn = document.createElement('button');
             btn.className = "answer-btn";
-            btn.innerText = option;
-            btn.onclick = () => handleAnswer(option, q.a);
-            container.appendChild(btn);
+            btn.innerText = opt;
+            btn.onclick = () => check(opt, qObj.a);
+            cont.appendChild(btn);
         });
+        startTimer();
     }
 
-    function handleAnswer(selected, correct) {
-        if (selected === correct) score += 10;
-        currentIndex++;
-        renderQuestion();
+    function startTimer() {
+        game.timer = 15;
+        game.interval = setInterval(() => {
+            game.timer--;
+            document.getElementById('timer').innerText = game.timer;
+            if(game.timer <= 0) { clearInterval(game.interval); switchTurn(); }
+        }, 1000);
     }
 
-    function showResult() {
-        document.getElementById('game-screen').classList.add('hidden');
-        document.getElementById('result-screen').classList.remove('hidden');
-        document.getElementById('final-stats').innerHTML = `
-            <p>نقاطك النهائية: ${score}</p>
-            <p>عدد الأسئلة: ${currentQuestions.length}</p>
-        `;
+    function check(ans, correct) {
+        clearInterval(game.interval);
+        if(ans === correct) {
+            if(game.turn === 1) game.s1++; else game.s2++;
+            document.getElementById('score1').innerText = game.s1;
+            document.getElementById('score2').innerText = game.s2;
+        }
+        switchTurn();
+    }
+
+    function switchTurn() {
+        game.turn = game.turn === 1 ? 2 : 1;
+        renderTurn();
     }
 </script>
 
