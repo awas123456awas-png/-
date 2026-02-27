@@ -2,24 +2,21 @@
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
-<title>فوازير سباع</title>
-
+<header>🔥 Sba3 Fwazer 🔥</header>
 <style>
 
 body{
     font-family: Arial;
-    background: linear-gradient(135deg,#000,#200000,#500000);
+    background: radial-gradient(circle,#000,#200000,#500000);
     color:white;
     text-align:center;
     margin:0;
 }
 
 header{
-    background:#8b0000;
-    padding:20px;
-    font-size:32px;
-    font-weight:bold;
-    letter-spacing:2px;
+    background:linear-gradient(90deg,#8b0000,#000);
+    padding:25px;
+    font-size:40px;
 }
 
 .container{
@@ -27,25 +24,24 @@ header{
 }
 
 input{
-    padding:12px;
-    margin:6px;
+    padding:14px;
+    margin:8px;
     border-radius:12px;
     border:none;
-    font-size:16px;
 }
 
 button{
-    padding:14px 28px;
-    margin:6px;
+    padding:15px 30px;
+    margin:8px;
     border:none;
-    border-radius:14px;
-    font-size:16px;
+    border-radius:15px;
     cursor:pointer;
     transition:.3s;
+    font-size:16px;
 }
 
 button:hover{
-    transform:scale(1.08);
+    transform:scale(1.1);
 }
 
 .category{
@@ -57,71 +53,59 @@ button:hover{
     background:#b30000;
     color:white;
     display:block;
-    margin:10px auto;
     width:60%;
-}
-
-.teamA{
-    background:#ff1a1a;
-}
-
-.teamB{
-    background:#660000;
+    margin:12px auto;
 }
 
 #question{
-    font-size:32px;
+    font-size:34px;
     margin:30px;
 }
 
 #timer{
-    font-size:35px;
-    color:#ff5555;
-}
-
-.scoreBox{
-    font-size:26px;
-    margin:20px;
+    font-size:40px;
+    color:#ff4444;
 }
 
 #turn{
-    font-size:26px;
+    font-size:30px;
     color:#ffd700;
 }
 
+.scoreBox{
+    font-size:28px;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<header>🔥 فوازير سباع 🔥</header>
+<header>🔥🏆 فوازير سباع 🏆🔥</header>
 
 <div class="container">
 
-<h2>أدخل أسماء الفرق</h2>
+<h2>👥 أدخل أسماء الفرق</h2>
 
-<input id="teamA" placeholder="الفريق الأول">
-<input id="teamB" placeholder="الفريق الثاني">
+<input id="teamA" placeholder="🎯 الفريق الأول">
+<input id="teamB" placeholder="🎯 الفريق الثاني">
 
 <br>
 <button style="background:#8b0000;color:white" onclick="startGame()">
-ابدأ اللعبة
+🚀 ابدأ التحدي
 </button>
 
 <div id="game" style="display:none">
 
 <h2 id="turn"></h2>
-
 <div class="scoreBox" id="score"></div>
 
-<h3>⏳ الوقت: <span id="timer">20</span></h3>
+<h2>⏳ الوقت: <span id="timer">20</span></h2>
 
-<h2>اختر القسم</h2>
+<h2>🎲 اختر قسم السؤال</h2>
 
-<button class="category" onclick="loadQuestion('general')">عامة</button>
-<button class="category" onclick="loadQuestion('geo')">جغرافيا</button>
-<button class="category" onclick="loadQuestion('anime')">أنمي</button>
-<button class="category" onclick="loadQuestion('series')">مسلسلات</button>
+<button class="category" onclick="loadQuestion()">📚 سؤال جديد عشوائي</button>
 
 <h2 id="question"></h2>
 <div id="answers"></div>
@@ -134,30 +118,22 @@ button:hover{
 let teamA="", teamB="";
 let scoreA=0, scoreB=0;
 
-let currentTurn="A";
-let questionsLeft=[];
+let turn="A";
 let correct="";
 let timer;
 let timeLeft=20;
 
-const questions={
-general:[
-{q:"كم عدد كواكب المجموعة الشمسية؟",a:["7","8","9"],c:"8"},
-{q:"كم عدد أيام الأسبوع؟",a:["5","7","10"],c:"7"}
-],
-geo:[
-{q:"أكبر دولة مساحة؟",a:["روسيا","كندا","الصين"],c:"روسيا"},
-{q:"أطول نهر؟",a:["النيل","الأمازون","دجلة"],c:"النيل"}
-],
-anime:[
-{q:"بطل دراغون بول؟",a:["غوكو","ناروتو","لوفي"],c:"غوكو"},
-{q:"أنمي القراصنة؟",a:["One Piece","Naruto","Bleach"],c:"One Piece"}
-],
-series:[
-{q:"بطل Breaking Bad؟",a:["والتر وايت","جيسي","ساول"],c:"والتر وايت"},
-{q:"مسلسل الزمن المظلم؟",a:["Dark","Lost","Friends"],c:"Dark"}
-]
-};
+/* 🔥 بنك أسئلة ضخم ذكي (مئات الأسئلة ممكن تضيفها هنا) */
+const bank=[
+{q:"🌍 أكبر دولة مساحة؟",a:["روسيا","كندا","الصين"],c:"روسيا"},
+{q:"⚽ كم لاعب في كرة القدم؟",a:["9","10","11"],c:"11"},
+{q:"🧠 ما عاصمة السعودية؟",a:["جدة","الرياض","الدمام"],c:"الرياض"},
+{q:"🎬 من بطل Breaking Bad؟",a:["والتر وايت","جيسي","ساول"],c:"والتر وايت"},
+{q:"🐉 بطل دراغون بول؟",a:["غوكو","ناروتو","لوفي"],c:"غوكو"},
+{q:"🌊 أكبر محيط؟",a:["الهادئ","الأطلسي","الهندي"],c:"الهادئ"},
+{q:"📿 كم عدد آيات الفاتحة؟",a:["6","7","8"],c:"7"},
+{q:"🗺️ أصغر دولة؟",a:["الفاتيكان","البحرين","قطر"],c:"الفاتيكان"}
+];
 
 function startGame(){
 
@@ -172,20 +148,20 @@ updateTurn();
 
 function updateScore(){
 document.getElementById("score").innerText=
-teamA+" : "+scoreA+" | "+teamB+" : "+scoreB;
+teamA+" 🟥 "+scoreA+" | "+teamB+" ⬛ "+scoreB;
 }
 
 function updateTurn(){
 document.getElementById("turn").innerText=
-"دور اللعب: "+(currentTurn==="A"?teamA:teamB);
+"🎯 الدور الحالي: "+(turn==="A"?teamA:teamB);
 }
 
-function loadQuestion(cat){
+function loadQuestion(){
 
-let arr=questions[cat];
-let q=arr[Math.floor(Math.random()*arr.length)];
+let q=bank[Math.floor(Math.random()*bank.length)];
 
 document.getElementById("question").innerText=q.q;
+
 correct=q.c;
 
 let html="";
@@ -199,6 +175,7 @@ startTimer();
 }
 
 function startTimer(){
+
 clearInterval(timer);
 timeLeft=20;
 
@@ -221,25 +198,23 @@ clearInterval(timer);
 
 if(ans===correct){
 
-if(currentTurn==="A") scoreA++;
+if(turn==="A") scoreA++;
 else scoreB++;
 
 alert("✅ إجابة صحيحة!");
 
 }else{
-alert("❌ إجابة خاطئة!");
+alert("❌ خطأ!");
 }
 
 updateScore();
 nextTurn();
+
+document.getElementById("answers").innerHTML="";
 }
 
 function nextTurn(){
-
-document.getElementById("answers").innerHTML="";
-
-currentTurn = currentTurn==="A" ? "B" : "A";
-
+turn = turn==="A" ? "B" : "A";
 updateTurn();
 }
 
