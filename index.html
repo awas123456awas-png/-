@@ -5,35 +5,40 @@
 <title>فوازير سباع</title>
 
 <style>
+
 body{
     font-family: Arial;
-    background: radial-gradient(circle,#000,#200000,#500000);
+    background: linear-gradient(135deg,#000,#200000,#500000);
     color:white;
     text-align:center;
-}
-
-h1{
-    background:#8b0000;
-    padding:20px;
     margin:0;
 }
 
+header{
+    background:#8b0000;
+    padding:20px;
+    font-size:32px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
 .container{
-    padding:25px;
+    padding:30px;
 }
 
 input{
     padding:12px;
     margin:6px;
-    border-radius:10px;
+    border-radius:12px;
     border:none;
+    font-size:16px;
 }
 
 button{
-    padding:12px 25px;
+    padding:14px 28px;
     margin:6px;
     border:none;
-    border-radius:12px;
+    border-radius:14px;
     font-size:16px;
     cursor:pointer;
     transition:.3s;
@@ -51,37 +56,45 @@ button:hover{
 .answerBtn{
     background:#b30000;
     color:white;
+    display:block;
+    margin:10px auto;
+    width:60%;
 }
 
-.teamBtnA{
+.teamA{
     background:#ff1a1a;
 }
 
-.teamBtnB{
+.teamB{
     background:#660000;
 }
 
-#timer{
-    font-size:30px;
-    color:#ff4444;
-}
-
 #question{
-    font-size:30px;
-    margin:25px;
+    font-size:32px;
+    margin:30px;
 }
 
-#winner{
-    font-size:40px;
-    margin-top:30px;
+#timer{
+    font-size:35px;
+    color:#ff5555;
 }
+
+.scoreBox{
+    font-size:26px;
+    margin:20px;
+}
+
+#turn{
+    font-size:26px;
+    color:#ffd700;
+}
+
 </style>
-
 </head>
 
 <body>
 
-<h1>🔥 فوازير سباع 🔥</h1>
+<header>🔥 فوازير سباع 🔥</header>
 
 <div class="container">
 
@@ -92,72 +105,69 @@ button:hover{
 
 <br>
 <button style="background:#8b0000;color:white" onclick="startGame()">
-ابدأ اللعب
+ابدأ اللعبة
 </button>
 
 <div id="game" style="display:none">
 
-<h2 id="score"></h2>
+<h2 id="turn"></h2>
+
+<div class="scoreBox" id="score"></div>
+
 <h3>⏳ الوقت: <span id="timer">20</span></h3>
 
-<h2>اختر قسم الأسئلة</h2>
+<h2>اختر القسم</h2>
 
-<button class="category" onclick="getQuestion('general')">عامة</button>
-<button class="category" onclick="getQuestion('geo')">جغرافيا</button>
-<button class="category" onclick="getQuestion('anime')">أنمي</button>
-<button class="category" onclick="getQuestion('series')">مسلسلات</button>
+<button class="category" onclick="loadQuestion('general')">عامة</button>
+<button class="category" onclick="loadQuestion('geo')">جغرافيا</button>
+<button class="category" onclick="loadQuestion('anime')">أنمي</button>
+<button class="category" onclick="loadQuestion('series')">مسلسلات</button>
 
 <h2 id="question"></h2>
 <div id="answers"></div>
 
-<br>
-
-<button class="teamBtnA" onclick="addPoint('A')">نقطة للفريق 1</button>
-<button class="teamBtnB" onclick="addPoint('B')">نقطة للفريق 2</button>
-
-<h2 id="winner"></h2>
-
 </div>
-
 </div>
 
 <script>
 
 let teamA="", teamB="";
 let scoreA=0, scoreB=0;
+
+let currentTurn="A";
+let questionsLeft=[];
 let correct="";
 let timer;
 let timeLeft=20;
 
 const questions={
 general:[
-{q:"كم عدد آيات سورة الفاتحة؟",a:["6","7","8"],c:"7"},
-{q:"ما أكبر محيط في العالم؟",a:["الهادئ","الأطلسي","الهندي"],c:"الهادئ"},
-{q:"كم عدد قارات العالم؟",a:["5","6","7"],c:"7"}
+{q:"كم عدد كواكب المجموعة الشمسية؟",a:["7","8","9"],c:"8"},
+{q:"كم عدد أيام الأسبوع؟",a:["5","7","10"],c:"7"}
 ],
-
 geo:[
-{q:"أطول جبل في العالم؟",a:["إفرست","K2","كنغشان"],c:"إفرست"},
-{q:"أصغر دولة في العالم؟",a:["الفاتيكان","البحرين","قطر"],c:"الفاتيكان"}
+{q:"أكبر دولة مساحة؟",a:["روسيا","كندا","الصين"],c:"روسيا"},
+{q:"أطول نهر؟",a:["النيل","الأمازون","دجلة"],c:"النيل"}
 ],
-
 anime:[
-{q:"من بطل هجوم العمالقة؟",a:["إيرين","لوفي","ناروتو"],c:"إيرين"},
-{q:"ما اسم أنمي القراصنة؟",a:["One Piece","Bleach","Naruto"],c:"One Piece"}
+{q:"بطل دراغون بول؟",a:["غوكو","ناروتو","لوفي"],c:"غوكو"},
+{q:"أنمي القراصنة؟",a:["One Piece","Naruto","Bleach"],c:"One Piece"}
 ],
-
 series:[
-{q:"من هو البطل في Breaking Bad؟",a:["والتر وايت","جيسي","ساول"],c:"والتر وايت"},
-{q:"مسلسل خيال مظلم عن الزمن؟",a:["Dark","Lost","Vikings"],c:"Dark"}
+{q:"بطل Breaking Bad؟",a:["والتر وايت","جيسي","ساول"],c:"والتر وايت"},
+{q:"مسلسل الزمن المظلم؟",a:["Dark","Lost","Friends"],c:"Dark"}
 ]
 };
 
 function startGame(){
+
 teamA=document.getElementById("teamA").value || "الفريق 1";
 teamB=document.getElementById("teamB").value || "الفريق 2";
 
 document.getElementById("game").style.display="block";
+
 updateScore();
+updateTurn();
 }
 
 function updateScore(){
@@ -165,7 +175,12 @@ document.getElementById("score").innerText=
 teamA+" : "+scoreA+" | "+teamB+" : "+scoreB;
 }
 
-function getQuestion(cat){
+function updateTurn(){
+document.getElementById("turn").innerText=
+"دور اللعب: "+(currentTurn==="A"?teamA:teamB);
+}
+
+function loadQuestion(cat){
 
 let arr=questions[cat];
 let q=arr[Math.floor(Math.random()*arr.length)];
@@ -188,13 +203,13 @@ clearInterval(timer);
 timeLeft=20;
 
 timer=setInterval(()=>{
+
 timeLeft--;
 document.getElementById("timer").innerText=timeLeft;
 
 if(timeLeft<=0){
 clearInterval(timer);
-alert("⏰ انتهى الوقت");
-document.getElementById("answers").innerHTML="";
+nextTurn();
 }
 
 },1000);
@@ -205,19 +220,27 @@ function checkAnswer(ans){
 clearInterval(timer);
 
 if(ans===correct){
-alert("✅ صحيح!");
-}else{
-alert("❌ خطأ!");
-}
 
-document.getElementById("answers").innerHTML="";
-}
-
-function addPoint(team){
-if(team==="A") scoreA++;
+if(currentTurn==="A") scoreA++;
 else scoreB++;
 
+alert("✅ إجابة صحيحة!");
+
+}else{
+alert("❌ إجابة خاطئة!");
+}
+
 updateScore();
+nextTurn();
+}
+
+function nextTurn(){
+
+document.getElementById("answers").innerHTML="";
+
+currentTurn = currentTurn==="A" ? "B" : "A";
+
+updateTurn();
 }
 
 </script>
