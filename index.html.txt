@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<title>فوازير سباع</title>
+<style>
+body{font-family:Arial;background:#0f172a;color:white;text-align:center;margin:0}
+h1{background:#1e293b;padding:15px;margin:0}
+.container{padding:20px}
+input{padding:8px;margin:5px}
+button{padding:10px 20px;margin:5px;font-size:15px;cursor:pointer;border:none;border-radius:8px}
+.cat{background:#334155;color:white}
+.answer{background:#475569;color:white}
+.teamA{background:#3b82f6}
+.teamB{background:#ec4899}
+#timer{font-size:22px;color:#facc15}
+.box{margin-top:20px}
+</style>
+</head>
+<body>
+
+<h1>🔥 فوازير سباع 🔥</h1>
+
+<div class="container">
+
+<div class="box">
+<h2>أدخل أسماء الفرق</h2>
+<input id="nameA" placeholder="اسم الفريق الأول">
+<input id="nameB" placeholder="اسم الفريق الثاني">
+<button onclick="startGame()">ابدأ اللعبة</button>
+</div>
+
+<div id="game" style="display:none">
+
+<h2 id="scoreBoard"></h2>
+<h3>⏳ الوقت المتبقي: <span id="timer">15</span></h3>
+
+<div class="box">
+<button class="cat" onclick="loadCategory('general')">عامة</button>
+<button class="cat" onclick="loadCategory('geo')">جغرافيا</button>
+<button class="cat" onclick="loadCategory('anime')">أنمي</button>
+<button class="cat" onclick="loadCategory('cartoon')">كرتون</button>
+<button class="cat" onclick="loadCategory('series')">مسلسلات</button>
+</div>
+
+<h2 id="question"></h2>
+<div id="answers"></div>
+
+<div class="box">
+<button class="teamA" onclick="addPoint('A')">نقطة للفريق 1</button>
+<button class="teamB" onclick="addPoint('B')">نقطة للفريق 2</button>
+</div>
+
+<div class="box">
+<button onclick="showWinner()">إعلان الفائز 🏆</button>
+<h2 id="winner"></h2>
+</div>
+
+</div>
+</div>
+
+<script>
+let teamA="", teamB="";
+let scoreA=0, scoreB=0;
+let correctAnswer="";
+let timerInterval;
+let timeLeft=15;
+
+const questions={
+general:[
+{q:"كم عدد أيام الأسبوع؟",a:["5","7","10"],c:"7"},
+{q:"كم عدد أشهر السنة؟",a:["10","12","14"],c:"12"}
+],
+geo:[
+{q:"عاصمة فرنسا؟",a:["باريس","روما","مدريد"],c:"باريس"},
+{q:"أكبر قارة؟",a:["آسيا","أوروبا","أفريقيا"],c:"آسيا"}
+],
+anime:[
+{q:"بطل ون بيس؟",a:["ناروتو","لوفي","غوكو"],c:"لوفي"},
+{q:"ناروتو ينتمي لأي قرية؟",a:["الورق","الضباب","الورقة"],c:"الورقة"}
+],
+cartoon:[
+{q:"سبونج بوب يعيش في؟",a:["البحر","الجبل","الفضاء"],c:"البحر"},
+{q:"توم يطارد؟",a:["جيري","بطوط","ميكي"],c:"جيري"}
+],
+series:[
+{q:"مسلسل كيمياء يتحول لجريمة؟",a:["Dark","Breaking Bad","Friends"],c:"Breaking Bad"},
+{q:"مسلسل سعودي قديم مشهور؟",a:["طاش ما طاش","Narcos","Lost"],c:"طاش ما طاش"}
+]
+};
+
+function startGame(){
+teamA=document.getElementById("nameA").value||"الفريق الأول";
+teamB=document.getElementById("nameB").value||"الفريق الثاني";
+document.getElementById("game").style.display="block";
+updateScore();
+}
+
+function updateScore(){
+document.getElementById("scoreBoard").innerText=
+teamA+" : "+scoreA+" | "+teamB+" : "+scoreB;
+}
+
+function loadCategory(cat){
+let random=questions[cat][Math.floor(Math.random()*questions[cat].length)];
+document.getElementById("question").innerText=random.q;
+correctAnswer=random.c;
+let html="";
+random.a.forEach(ans=>{
+html+=`<button class="answer" onclick="checkAnswer('${ans}')">${ans}</button>`;
+});
+document.getElementById("answers").innerHTML=html;
+startTimer();
+}
+
+function startTimer(){
+timeLeft=15;
+document.getElementById("timer").innerText=timeLeft;
+clearInterval(timerInterval);
+timerInterval=setInterval(()=>{
+timeLeft--;
+document.getElementById("timer").innerText=timeLeft;
+if(timeLeft<=0){
+clearInterval(timerInterval);
+alert("انتهى الوقت ⏰");
+}
+},1000);
+}
+
+function checkAnswer(ans){
+clearInterval(timerInterval);
+if(ans===correctAnswer){
+alert("✅ إجابة صحيحة");
+}else{
+alert("❌ إجابة خاطئة");
+}
+document.getElementById("answers").innerHTML="";
+}
+
+function addPoint(team){
+if(team==="A"){scoreA++}else{scoreB++}
+updateScore();
+}
+
+function showWinner(){
+if(scoreA>scoreB){
+document.getElementById("winner").innerText="🏆 الفائز: "+teamA;
+}else if(scoreB>scoreA){
+document.getElementById("winner").innerText="🏆 الفائز: "+teamB;
+}else{
+document.getElementById("winner").innerText="🤝 تعادل!";
+}
+}
+</script>
+
+</body>
+</html>
