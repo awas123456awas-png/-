@@ -10,38 +10,70 @@
 
 body{
 font-family:'Tajawal',sans-serif;
-background: radial-gradient(circle at center,#200000,#000);
+background: radial-gradient(circle,#200000,#000);
 color:white;
 margin:0;
-text-align:center;
 }
 
-header{
-padding:30px;
-font-size:55px;
-font-weight:bold;
-background: linear-gradient(90deg,#8b0000,#000);
-text-shadow:0 0 20px red;
+/* شاشة البداية */
+#startScreen{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
 }
 
-.container{
+/* زر البداية الكبير */
+.bigBtn{
+padding:30px 70px;
+font-size:35px;
+border:none;
+border-radius:25px;
+background:linear-gradient(90deg,#8b0000,#000);
+color:white;
+cursor:pointer;
+transition:.4s;
+}
+
+.bigBtn:hover{
+transform:scale(1.1);
+}
+
+/* القوائم الجانبية */
+.sidebar{
+position:fixed;
+top:0;
+width:250px;
+height:100%;
+padding:20px;
+background:#0a0a0a;
+}
+
+.left{ left:0; }
+.right{ right:0; }
+
+.main{
+margin-left:270px;
+margin-right:270px;
 padding:40px;
+text-align:center;
 }
 
 input{
 padding:14px;
-margin:8px;
+margin:10px;
+width:80%;
 border-radius:12px;
 border:none;
 font-size:16px;
 }
 
 button{
-padding:15px 32px;
-margin:8px;
+padding:14px 28px;
+margin:10px;
 border:none;
 border-radius:14px;
-font-size:16px;
 cursor:pointer;
 transition:.3s;
 }
@@ -50,7 +82,7 @@ button:hover{
 transform:scale(1.1);
 }
 
-.startBtn{
+.startGameBtn{
 background:#8b0000;
 color:white;
 }
@@ -64,13 +96,13 @@ color:white;
 background:#b30000;
 color:white;
 display:block;
-width:60%;
+width:80%;
 margin:12px auto;
 }
 
 #question{
 font-size:38px;
-margin:35px;
+margin:40px;
 }
 
 #timer{
@@ -78,78 +110,86 @@ font-size:45px;
 color:#ff4444;
 }
 
-#score{
-font-size:28px;
-margin:25px;
-}
-
-#turn{
-font-size:32px;
-color:#ffd700;
-}
-
 </style>
-
 </head>
 
 <body>
 
-<header>🔥 Sba3 Fwazer 👑</header>
+<!-- شاشة البداية -->
+<div id="startScreen">
+<h1>🔥 Sba3 Fwazer 👑</h1>
+<button class="bigBtn" onclick="showTeamScreen()">
+🎮 جاهز للفوازير؟
+</button>
+</div>
 
-<div class="container">
-
+<!-- شاشة إدخال الفرق -->
+<div id="teamScreen" style="display:none; text-align:center; padding-top:150px;">
 <h2>👥 أدخل أسماء الفرق</h2>
 
 <input id="teamA" placeholder="الفريق الأول">
+<br>
 <input id="teamB" placeholder="الفريق الثاني">
 
-<br>
-<button class="startBtn" onclick="startGame()">
-🚀 ابدأ البطولة
+<br><br>
+<button class="startGameBtn" onclick="startGame()">
+🚀 ابدأ اللعبة
 </button>
+</div>
 
+<!-- واجهة اللعبة -->
 <div id="game" style="display:none">
 
-<h2 id="turn"></h2>
-<div id="score"></div>
-
-<h2>⏳ الوقت: <span id="timer">25</span></h2>
-
+<div class="sidebar left">
+<h3>🎯 التحكم</h3>
 <button class="category" onclick="loadQuestion()">🎲 سؤال عشوائي</button>
+</div>
+
+<div class="sidebar right">
+<h3>🏆 النقاط</h3>
+<p id="score"></p>
+<p id="turn"></p>
+</div>
+
+<div class="main">
+
+<h2>⏳ الوقت: <span id="timer">20</span></h2>
 
 <h2 id="question"></h2>
 <div id="answers"></div>
 
 </div>
-
 </div>
 
 <script>
 
 let teamA="", teamB="";
 let scoreA=0, scoreB=0;
-
 let turn="A";
 let correct="";
 let timer;
-let timeLeft=25;
+let timeLeft=20;
 
+/* بنك أسئلة */
 const bank=[
-
 {q:"🌍 أكبر دولة مساحة؟",a:["روسيا","كندا","الصين"],c:"روسيا"},
 {q:"🐉 بطل دراغون بول؟",a:["غوكو","ناروتو","لوفي"],c:"غوكو"},
-{q:"📿 كم عدد آيات الفاتحة؟",a:["6","7","8"],c:"7"},
 {q:"⚽ كم لاعب كرة قدم؟",a:["9","10","11"],c:"11"},
-{q:"🎬 بطل Breaking Bad؟",a:["والتر وايت","جيسي","ساول"],c:"والتر وايت"},
+{q:"📿 كم عدد آيات الفاتحة؟",a:["6","7","8"],c:"7"},
 {q:"🌊 أكبر محيط؟",a:["الهادئ","الأطلسي","الهندي"],c:"الهادئ"}
-
 ];
+
+function showTeamScreen(){
+document.getElementById("startScreen").style.display="none";
+document.getElementById("teamScreen").style.display="block";
+}
 
 function startGame(){
 
 teamA=document.getElementById("teamA").value || "الفريق 1";
 teamB=document.getElementById("teamB").value || "الفريق 2";
 
+document.getElementById("teamScreen").style.display="none";
 document.getElementById("game").style.display="block";
 
 updateScore();
@@ -163,7 +203,7 @@ teamA+" 🟥 "+scoreA+" | "+teamB+" ⬛ "+scoreB;
 
 function updateTurn(){
 document.getElementById("turn").innerText=
-"🎯 الدور الحالي: "+(turn==="A"?teamA:teamB);
+"🎯 الدور: "+(turn==="A"?teamA:teamB);
 }
 
 function loadQuestion(){
@@ -179,17 +219,15 @@ html+=`<button class="answerBtn" onclick="checkAnswer('${ans}')">${ans}</button>
 });
 
 document.getElementById("answers").innerHTML=html;
-
 startTimer();
 }
 
 function startTimer(){
 
 clearInterval(timer);
-timeLeft=25;
+timeLeft=20;
 
 timer=setInterval(()=>{
-
 timeLeft--;
 document.getElementById("timer").innerText=timeLeft;
 
@@ -197,7 +235,6 @@ if(timeLeft<=0){
 clearInterval(timer);
 nextTurn();
 }
-
 },1000);
 }
 
@@ -206,19 +243,15 @@ function checkAnswer(ans){
 clearInterval(timer);
 
 if(ans===correct){
-
 if(turn==="A") scoreA++;
 else scoreB++;
-
 alert("✅ صحيح!");
-
 }else{
 alert("❌ خطأ!");
 }
 
 updateScore();
 nextTurn();
-
 document.getElementById("answers").innerHTML="";
 }
 
