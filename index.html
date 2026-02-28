@@ -2,136 +2,94 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Sba3 Fwazer - نسخة الاحتراف</title>
+    <title>Sba3 Fwazer Pro</title>
     <style>
-        :root { --bg: #1a1a2e; --accent: #4e4e6a; --text: #ffffff; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: white; transition: background 0.5s; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        :root { --bg: #1a1a2e; --text: #ffffff; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: white; transition: background 0.4s; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
         
-        /* نظام الثيمات حسب القسم */
-        .theme-cars { --bg: #5a189a; --accent: #7b2cbf; }
-        .theme-anime { --bg: #3c096c; --accent: #5a189a; }
-        .theme-cartoons { --bg: #0077b6; --accent: #0096c7; }
-        .theme-sports { --bg: #2d6a4f; --accent: #40916c; }
-        .theme-games { --bg: #bc6c25; --accent: #dda15e; }
-        .theme-history { --bg: #606c38; --accent: #88935c; }
+        /* الثيمات المتغيرة لكل قسم */
+        .theme-default { background: #1a1a2e; }
+        .theme-cars { background: #5a189a; }
+        .theme-anime { background: #3c096c; }
+        .theme-cartoons { background: #0077b6; }
+        .theme-sports { background: #2d6a4f; }
+        .theme-games { background: #bc6c25; }
+        .theme-history { background: #606c38; }
 
-        .container { width: 90%; max-width: 500px; text-align: center; }
+        .scoreboard { display: flex; width: 90%; max-width: 500px; justify-content: space-between; padding: 20px 0; }
+        .score-box { background: rgba(0,0,0,0.3); padding: 15px 25px; border-radius: 15px; text-align: center; width: 40%; }
         
-        /* لوحة النقاط المحدثة */
-        .scoreboard { display: flex; justify-content: space-between; margin-bottom: 30px; }
-        .team-box { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; width: 45%; }
-        .team-name { font-size: 14px; opacity: 0.8; margin-bottom: 5px; }
-        .team-score { font-size: 32px; font-weight: bold; color: #fff; }
-
-        /* منطقة اللعب الثابتة */
-        .game-panel { background: var(--accent); padding: 30px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 300px; display: flex; flex-direction: column; justify-content: center; }
-        
-        button { padding: 15px; margin: 10px 0; border-radius: 12px; border: none; cursor: pointer; background: rgba(255,255,255,0.1); color: white; font-size: 16px; transition: 0.3s; }
-        button:hover { background: rgba(255,255,255,0.2); }
-        .hidden { display: none; }
-        #timer { font-size: 60px; font-weight: bold; margin-bottom: 10px; }
+        #viewport { width: 90%; max-width: 500px; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 25px; text-align: center; backdrop-filter: blur(5px); }
+        button { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; background: white; color: #333; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; }
+        button:hover { transform: scale(1.02); background: #eee; }
     </style>
 </head>
 <body class="theme-default">
 
-<div class="container">
-    <div id="start-screen">
-        <h1>🎮 Sba3 Fwazer</h1>
-        <input id="p1" placeholder="الفريق الأول" style="padding:10px; width:80%; margin-bottom:10px; border-radius:8px; border:none;"><br>
-        <input id="p2" placeholder="الفريق الثاني" style="padding:10px; width:80%; margin-bottom:20px; border-radius:8px; border:none;"><br>
-        <button onclick="startGame()" style="width:85%; background:#e63946; font-size:20px;">بدء اللعب</button>
+    <div class="scoreboard">
+        <div class="score-box"><div id="name1" style="font-size:12px;">الفريق 1</div><div id="s1" style="font-size:24px; font-weight:bold;">0</div></div>
+        <div class="score-box"><div id="name2" style="font-size:12px;">الفريق 2</div><div id="s2" style="font-size:24px; font-weight:bold;">0</div></div>
     </div>
 
-    <div id="game-screen" class="hidden">
-        <div class="scoreboard">
-            <div class="team-box"><div id="name1" class="team-name">...</div><div id="score1" class="team-score">0</div></div>
-            <div class="team-box"><div id="name2" class="team-name">...</div><div id="score2" class="team-score">0</div></div>
-        </div>
-
-        <div class="game-panel">
-            <div id="timer" class="hidden">15</div>
-            <h2 id="q-text">اختر القسم</h2>
-            <div id="controls">
-                <div id="cats-grid" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                    <button onclick="selectCat('cars')">🚗 سيارات</button>
-                    <button onclick="selectCat('anime')">⛩️ أنمي</button>
-                    <button onclick="selectCat('cartoons')">📺 كرتون</button>
-                    <button onclick="selectCat('sports')">⚽ كورة</button>
-                    <button onclick="selectCat('games')">🎮 ألعاب</button>
-                    <button onclick="selectCat('history')">📜 تاريخ</button>
-                </div>
-                <div id="ans-grid" class="hidden" style="display:flex; flex-direction:column;"></div>
-            </div>
-        </div>
-    </div>
-</div>
+    <div id="viewport"></div>
 
 <script>
+    // قاعدة البيانات (هنا تضع الـ 100 سؤال)
     const db = {
         cars: [{q: "أسرع سيارة في العالم؟", o: ["بوجاتي", "تويوتا", "فورد"], a: "بوجاتي"}],
-        anime: [{q: "بطل ون بيس؟", o: ["لوفي", "زورو", "سانجي"], a: "لوفي"}],
-        // ... (أضف بقية الـ 100 سؤال هنا بنفس الطريقة)
+        anime: [{q: "من بطل ون بيس؟", o: ["لوفي", "ناروتو", "غوكو"], a: "لوفي"}],
+        cartoons: [{q: "من هو جيري؟", o: ["قط", "فأر", "كلب"], a: "فأر"}],
+        sports: [{q: "كم عدد لاعبي الفريق؟", o: ["11", "9", "5"], a: "11"}],
+        games: [{q: "أكثر لعبة مبيعاً؟", o: ["Minecraft", "GTA", "FIFA"], a: "Minecraft"}],
+        history: [{q: "سنة تأسيس السعودية؟", o: ["1932", "1744", "1800"], a: "1744"}]
     };
 
-    let game = { p1: "", p2: "", s1: 0, s2: 0, turn: 1, timer: 15, interval: null };
+    let game = { p1: "الفريق 1", p2: "الفريق 2", s1: 0, s2: 0, turn: 1 };
 
-    function startGame() {
-        game.p1 = document.getElementById('p1').value || "الفريق 1";
-        game.p2 = document.getElementById('p2').value || "الفريق 2";
-        document.getElementById('name1').innerText = game.p1;
-        document.getElementById('name2').innerText = game.p2;
-        document.getElementById('start-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('hidden');
+    // دالة رسم الأقسام
+    function renderCats() {
+        document.body.className = "theme-default";
+        const v = document.getElementById('viewport');
+        v.innerHTML = "<h2>اختر قسماً</h2>";
+        const cats = ['cars', 'anime', 'cartoons', 'sports', 'games', 'history'];
+        cats.forEach(c => {
+            const btn = document.createElement('button');
+            btn.innerText = c.toUpperCase();
+            btn.onclick = () => renderQ(c);
+            v.appendChild(btn);
+        });
     }
 
-    function selectCat(cat) {
-        document.body.className = "theme-" + cat; // تغيير اللون فوراً
-        const q = db[cat][0]; // هنا يختار السؤال
+    // دالة رسم السؤال
+    function renderQ(cat) {
+        document.body.className = "theme-" + cat;
+        // هنا يأخذ سؤال عشوائي من القسم
+        const pool = db[cat];
+        const q = pool[Math.floor(Math.random() * pool.length)]; 
         
-        document.getElementById('q-text').innerText = q.q;
-        document.getElementById('cats-grid').classList.add('hidden');
-        const ansGrid = document.getElementById('ans-grid');
-        ansGrid.innerHTML = "";
+        const v = document.getElementById('viewport');
+        v.innerHTML = `<h3>${q.q}</h3>`;
         q.o.forEach(opt => {
             const btn = document.createElement('button');
             btn.innerText = opt;
-            btn.onclick = () => check(opt, q.a);
-            ansGrid.appendChild(btn);
+            btn.onclick = () => handleAnswer(opt, q.a);
+            v.appendChild(btn);
         });
-        ansGrid.classList.remove('hidden');
-        document.getElementById('timer').classList.remove('hidden');
-        startTimer();
     }
 
-    function startTimer() {
-        game.timer = 15;
-        document.getElementById('timer').innerText = game.timer;
-        clearInterval(game.interval);
-        game.interval = setInterval(() => {
-            game.timer--;
-            document.getElementById('timer').innerText = game.timer;
-            if(game.timer <= 0) { clearInterval(game.interval); nextTurn(); }
-        }, 1000);
-    }
-
-    function check(ans, correct) {
-        clearInterval(game.interval);
+    function handleAnswer(ans, correct) {
         if(ans === correct) {
             if(game.turn === 1) game.s1++; else game.s2++;
-            document.getElementById('score1').innerText = game.s1;
-            document.getElementById('score2').innerText = game.s2;
+            document.getElementById('s1').innerText = game.s1;
+            document.getElementById('s2').innerText = game.s2;
         }
-        nextTurn();
+        // تبديل الدور
+        game.turn = game.turn === 1 ? 2 : 1;
+        renderCats(); 
     }
 
-    function nextTurn() {
-        game.turn = game.turn === 1 ? 2 : 1;
-        document.getElementById('timer').classList.add('hidden');
-        document.getElementById('ans-grid').classList.add('hidden');
-        document.getElementById('cats-grid').classList.remove('hidden');
-        document.getElementById('q-text').innerText = "دور: " + (game.turn === 1 ? game.p1 : game.p2) + " - اختر القسم";
-        document.body.className = "theme-default"; // رجوع للون الأساسي
-    }
+    // تشغيل اللعبة
+    renderCats();
 </script>
 </body>
 </html>
