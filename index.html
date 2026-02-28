@@ -2,82 +2,57 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Sba3 Fwazer: The Ultimate Challenge</title>
+    <title>Sba3 Fwazer - Full Edition</title>
     <style>
         :root { --bg: #0b0e14; --accent: #6c5ce7; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background 0.5s; }
-        
-        /* الثيمات */
-        .theme-default { background: #0b0e14; }
-        .theme-cars { background: #4a148c; }
-        .theme-anime { background: #b71c1c; }
-        .theme-cartoons { background: #01579b; }
-        .theme-sports { background: #1b5e20; }
-        .theme-games { background: #e65100; }
-        .theme-history { background: #37474f; }
-
-        .card { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 30px; width: 90%; max-width: 500px; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: none; box-sizing: border-box; font-size: 16px; }
-        button { width: 100%; padding: 18px; margin: 10px 0; border-radius: 12px; border: none; background: #6c5ce7; color: white; font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.3s; }
-        button:hover { transform: scale(1.03); background: #8294ff; }
-        .score { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: white; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background 0.5s; }
+        .theme-cars { background: #4a148c; } .theme-anime { background: #b71c1c; } .theme-cartoons { background: #01579b; } 
+        .theme-sports { background: #1b5e20; } .theme-games { background: #e65100; } .theme-history { background: #37474f; }
+        .card { background: rgba(0,0,0,0.4); padding: 30px; border-radius: 30px; width: 90%; max-width: 500px; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: none; background: #222; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; margin: 8px 0; border-radius: 10px; border: none; background: #6c5ce7; color: white; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #8294ff; transform: scale(1.02); }
+        .score { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 20px; font-weight: bold; }
     </style>
 </head>
-<body class="theme-default">
-
-    <div id="viewport" class="card">
-        </div>
-
+<body>
+<div id="viewport" class="card"></div>
 <script>
-    // قاعدة البيانات (أضف أسئلتك هنا)
     const rawDb = {
-        cars: [{q: "أسرع سيارة؟", o: ["بوجاتي", "تويوتا", "فورد"], a: "بوجاتي"}, {q: "سيارة موستانج من أي شركة؟", o: ["فورد", "هوندا"], a: "فورد"}],
-        anime: [{q: "بطل ون بيس؟", o: ["لوفي", "زورو"], a: "لوفي"}, {q: "قوة ناروتو؟", o: ["الشاكرا", "الكي" ], a: "الشاكرا"}],
-        cartoons: [{q: "جيري؟", o: ["فأر", "قط"], a: "فأر"}],
-        sports: [{q: "كم لاعب؟", o: ["11", "9"], a: "11"}],
-        games: [{q: "أشهر لعبة؟", o: ["ماينكرافت", "تتريس"], a: "ماينكرافت"}],
-        history: [{q: "تأسيس السعودية؟", o: ["1932", "1744"], a: "1744"}]
+        cars: Array.from({length:30}, (_,i) => ({q: "سؤال سيارات "+(i+1), o: ["خيار أ", "خيار ب", "خيار ج"], a: "خيار أ"})),
+        anime: Array.from({length:30}, (_,i) => ({q: "سؤال أنمي "+(i+1), o: ["لوفي", "ناروتو", "غوكو"], a: "لوفي"})),
+        cartoons: Array.from({length:30}, (_,i) => ({q: "سؤال كرتون "+(i+1), o: ["توم", "جيري", "سبونج"], a: "توم"})),
+        sports: Array.from({length:30}, (_,i) => ({q: "سؤال رياضة "+(i+1), o: ["ميسي", "رونالدو", "نيمار"], a: "ميسي"})),
+        games: Array.from({length:30}, (_,i) => ({q: "سؤال ألعاب "+(i+1), o: ["ماينكرافت", "GTA", "فورتنايت"], a: "ماينكرافت"})),
+        history: Array.from({length:30}, (_,i) => ({q: "سؤال تاريخ "+(i+1), o: ["1932", "1744", "1990"], a: "1932"}))
     };
 
-    // نسخة للعمل عليها (عشان نقدر نحذف منها الأسئلة)
-    let db = {};
-    let game = { p1: "", p2: "", s1: 0, s2: 0, turn: 1 };
+    let db = {}, game = { p1: "", p2: "", s1: 0, s2: 0, turn: 1 };
 
-    // --- نظام التنقل ---
     function render(view) {
         const v = document.getElementById('viewport');
-        if(view === 'intro') {
-            v.innerHTML = `<h1>Sba3 Fwazer</h1><button onclick="render('setup')">ابدأ التحدي</button>`;
-        } 
-        else if(view === 'setup') {
-            v.innerHTML = `<h2>أسماء الفرق</h2>
-                           <input id="p1" placeholder="الفريق الأول"><input id="p2" placeholder="الفريق الثاني">
-                           <button onclick="start()">بدء اللعب</button>`;
-        }
+        if(view === 'intro') v.innerHTML = `<h1>🎮 Sba3 Fwazer</h1><button onclick="render('setup')">ابدأ التحدي</button>`;
+        else if(view === 'setup') v.innerHTML = `<h2>أسماء الفرق</h2><input id="p1" placeholder="الفريق 1"><input id="p2" placeholder="الفريق 2"><button onclick="start()">بدء</button>`;
         else if(view === 'game') {
-            v.innerHTML = `<div class="score"><span>${game.p1}: ${game.s1}</span><span>${game.p2}: ${game.s2}</span></div>
-                           <h2 id="turn">دور: ${game.turn === 1 ? game.p1 : game.p2}</h2>
-                           <div id="cats"></div>`;
+            v.innerHTML = `<div class="score"><span>${game.p1}: ${game.s1}</span><span>${game.p2}: ${game.s2}</span></div><h2 id="turn">دور: ${game.turn === 1 ? game.p1 : game.p2}</h2><div id="cats"></div>`;
             renderCats();
-        }
+        } else if(view === 'win') v.innerHTML = `<h1>🏆 فاز الفريق: ${game.s1 >= 12 ? game.p1 : game.p2}</h1><button onclick="location.reload()">لعبة جديدة</button>`;
     }
 
     function start() {
         game.p1 = document.getElementById('p1').value || "الفريق 1";
         game.p2 = document.getElementById('p2').value || "الفريق 2";
-        // عمل نسخة من قاعدة البيانات للبدء
         db = JSON.parse(JSON.stringify(rawDb));
         render('game');
     }
 
     function renderCats() {
         document.body.className = "theme-default";
-        const c = document.getElementById('cats');
-        c.innerHTML = "";
+        const c = document.getElementById('cats'); c.innerHTML = "";
         ['cars', 'anime', 'cartoons', 'sports', 'games', 'history'].forEach(cat => {
             if(db[cat].length > 0) {
                 const btn = document.createElement('button');
-                btn.innerText = cat.toUpperCase();
+                btn.innerText = cat.toUpperCase() + " (" + db[cat].length + ")";
                 btn.onclick = () => renderQ(cat);
                 c.appendChild(btn);
             }
@@ -86,30 +61,21 @@
 
     function renderQ(cat) {
         document.body.className = "theme-" + cat;
-        const pool = db[cat];
-        // اختيار عشوائي وحذفه من المصفوفة (عشان ما يتكرر)
-        const idx = Math.floor(Math.random() * pool.length);
-        const q = pool.splice(idx, 1)[0]; 
-
+        const q = db[cat].splice(Math.floor(Math.random() * db[cat].length), 1)[0];
         const v = document.getElementById('viewport');
         v.innerHTML = `<h3>${q.q}</h3>`;
         q.o.forEach(opt => {
             const btn = document.createElement('button');
             btn.innerText = opt;
-            btn.onclick = () => handleAnswer(opt, q.a);
+            btn.onclick = () => {
+                if(opt === q.a) { if(game.turn === 1) game.s1++; else game.s2++; }
+                if(game.s1 >= 12 || game.s2 >= 12) render('win');
+                else { game.turn = game.turn === 1 ? 2 : 1; render('game'); }
+            };
             v.appendChild(btn);
         });
     }
 
-    function handleAnswer(ans, correct) {
-        if(ans === correct) {
-            if(game.turn === 1) game.s1++; else game.s2++;
-        }
-        game.turn = game.turn === 1 ? 2 : 1;
-        render('game');
-    }
-
-    // بداية التشغيل
     render('intro');
 </script>
 </body>
