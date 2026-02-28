@@ -2,71 +2,95 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Sba3 Fwazer Pro</title>
+    <title>Sba3 Fwazer: The Ultimate Challenge</title>
     <style>
-        :root { --bg: #1a1a2e; --text: #ffffff; }
-        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: white; transition: background 0.4s; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        :root { --bg: #0b0e14; --accent: #6c5ce7; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: background 0.5s; }
         
-        /* الثيمات المتغيرة لكل قسم */
-        .theme-default { background: #1a1a2e; }
-        .theme-cars { background: #5a189a; }
-        .theme-anime { background: #3c096c; }
-        .theme-cartoons { background: #0077b6; }
-        .theme-sports { background: #2d6a4f; }
-        .theme-games { background: #bc6c25; }
-        .theme-history { background: #606c38; }
+        /* الثيمات */
+        .theme-default { background: #0b0e14; }
+        .theme-cars { background: #4a148c; }
+        .theme-anime { background: #b71c1c; }
+        .theme-cartoons { background: #01579b; }
+        .theme-sports { background: #1b5e20; }
+        .theme-games { background: #e65100; }
+        .theme-history { background: #37474f; }
 
-        .scoreboard { display: flex; width: 90%; max-width: 500px; justify-content: space-between; padding: 20px 0; }
-        .score-box { background: rgba(0,0,0,0.3); padding: 15px 25px; border-radius: 15px; text-align: center; width: 40%; }
-        
-        #viewport { width: 90%; max-width: 500px; background: rgba(255,255,255,0.1); padding: 30px; border-radius: 25px; text-align: center; backdrop-filter: blur(5px); }
-        button { display: block; width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: none; background: white; color: #333; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 16px; }
-        button:hover { transform: scale(1.02); background: #eee; }
+        .card { background: rgba(255,255,255,0.05); padding: 40px; border-radius: 30px; width: 90%; max-width: 500px; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        input { width: 100%; padding: 15px; margin: 10px 0; border-radius: 10px; border: none; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; padding: 18px; margin: 10px 0; border-radius: 12px; border: none; background: #6c5ce7; color: white; font-weight: bold; font-size: 18px; cursor: pointer; transition: 0.3s; }
+        button:hover { transform: scale(1.03); background: #8294ff; }
+        .score { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; }
     </style>
 </head>
 <body class="theme-default">
 
-    <div class="scoreboard">
-        <div class="score-box"><div id="name1" style="font-size:12px;">الفريق 1</div><div id="s1" style="font-size:24px; font-weight:bold;">0</div></div>
-        <div class="score-box"><div id="name2" style="font-size:12px;">الفريق 2</div><div id="s2" style="font-size:24px; font-weight:bold;">0</div></div>
-    </div>
-
-    <div id="viewport"></div>
+    <div id="viewport" class="card">
+        </div>
 
 <script>
-    // قاعدة البيانات (هنا تضع الـ 100 سؤال)
-    const db = {
-        cars: [{q: "أسرع سيارة في العالم؟", o: ["بوجاتي", "تويوتا", "فورد"], a: "بوجاتي"}],
-        anime: [{q: "من بطل ون بيس؟", o: ["لوفي", "ناروتو", "غوكو"], a: "لوفي"}],
-        cartoons: [{q: "من هو جيري؟", o: ["قط", "فأر", "كلب"], a: "فأر"}],
-        sports: [{q: "كم عدد لاعبي الفريق؟", o: ["11", "9", "5"], a: "11"}],
-        games: [{q: "أكثر لعبة مبيعاً؟", o: ["Minecraft", "GTA", "FIFA"], a: "Minecraft"}],
-        history: [{q: "سنة تأسيس السعودية؟", o: ["1932", "1744", "1800"], a: "1744"}]
+    // قاعدة البيانات (أضف أسئلتك هنا)
+    const rawDb = {
+        cars: [{q: "أسرع سيارة؟", o: ["بوجاتي", "تويوتا", "فورد"], a: "بوجاتي"}, {q: "سيارة موستانج من أي شركة؟", o: ["فورد", "هوندا"], a: "فورد"}],
+        anime: [{q: "بطل ون بيس؟", o: ["لوفي", "زورو"], a: "لوفي"}, {q: "قوة ناروتو؟", o: ["الشاكرا", "الكي" ], a: "الشاكرا"}],
+        cartoons: [{q: "جيري؟", o: ["فأر", "قط"], a: "فأر"}],
+        sports: [{q: "كم لاعب؟", o: ["11", "9"], a: "11"}],
+        games: [{q: "أشهر لعبة؟", o: ["ماينكرافت", "تتريس"], a: "ماينكرافت"}],
+        history: [{q: "تأسيس السعودية؟", o: ["1932", "1744"], a: "1744"}]
     };
 
-    let game = { p1: "الفريق 1", p2: "الفريق 2", s1: 0, s2: 0, turn: 1 };
+    // نسخة للعمل عليها (عشان نقدر نحذف منها الأسئلة)
+    let db = {};
+    let game = { p1: "", p2: "", s1: 0, s2: 0, turn: 1 };
 
-    // دالة رسم الأقسام
+    // --- نظام التنقل ---
+    function render(view) {
+        const v = document.getElementById('viewport');
+        if(view === 'intro') {
+            v.innerHTML = `<h1>Sba3 Fwazer</h1><button onclick="render('setup')">ابدأ التحدي</button>`;
+        } 
+        else if(view === 'setup') {
+            v.innerHTML = `<h2>أسماء الفرق</h2>
+                           <input id="p1" placeholder="الفريق الأول"><input id="p2" placeholder="الفريق الثاني">
+                           <button onclick="start()">بدء اللعب</button>`;
+        }
+        else if(view === 'game') {
+            v.innerHTML = `<div class="score"><span>${game.p1}: ${game.s1}</span><span>${game.p2}: ${game.s2}</span></div>
+                           <h2 id="turn">دور: ${game.turn === 1 ? game.p1 : game.p2}</h2>
+                           <div id="cats"></div>`;
+            renderCats();
+        }
+    }
+
+    function start() {
+        game.p1 = document.getElementById('p1').value || "الفريق 1";
+        game.p2 = document.getElementById('p2').value || "الفريق 2";
+        // عمل نسخة من قاعدة البيانات للبدء
+        db = JSON.parse(JSON.stringify(rawDb));
+        render('game');
+    }
+
     function renderCats() {
         document.body.className = "theme-default";
-        const v = document.getElementById('viewport');
-        v.innerHTML = "<h2>اختر قسماً</h2>";
-        const cats = ['cars', 'anime', 'cartoons', 'sports', 'games', 'history'];
-        cats.forEach(c => {
-            const btn = document.createElement('button');
-            btn.innerText = c.toUpperCase();
-            btn.onclick = () => renderQ(c);
-            v.appendChild(btn);
+        const c = document.getElementById('cats');
+        c.innerHTML = "";
+        ['cars', 'anime', 'cartoons', 'sports', 'games', 'history'].forEach(cat => {
+            if(db[cat].length > 0) {
+                const btn = document.createElement('button');
+                btn.innerText = cat.toUpperCase();
+                btn.onclick = () => renderQ(cat);
+                c.appendChild(btn);
+            }
         });
     }
 
-    // دالة رسم السؤال
     function renderQ(cat) {
         document.body.className = "theme-" + cat;
-        // هنا يأخذ سؤال عشوائي من القسم
         const pool = db[cat];
-        const q = pool[Math.floor(Math.random() * pool.length)]; 
-        
+        // اختيار عشوائي وحذفه من المصفوفة (عشان ما يتكرر)
+        const idx = Math.floor(Math.random() * pool.length);
+        const q = pool.splice(idx, 1)[0]; 
+
         const v = document.getElementById('viewport');
         v.innerHTML = `<h3>${q.q}</h3>`;
         q.o.forEach(opt => {
@@ -80,16 +104,13 @@
     function handleAnswer(ans, correct) {
         if(ans === correct) {
             if(game.turn === 1) game.s1++; else game.s2++;
-            document.getElementById('s1').innerText = game.s1;
-            document.getElementById('s2').innerText = game.s2;
         }
-        // تبديل الدور
         game.turn = game.turn === 1 ? 2 : 1;
-        renderCats(); 
+        render('game');
     }
 
-    // تشغيل اللعبة
-    renderCats();
+    // بداية التشغيل
+    render('intro');
 </script>
 </body>
 </html>
