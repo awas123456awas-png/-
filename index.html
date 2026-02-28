@@ -2,36 +2,36 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>Sba3 Fwazer Pro - نظام 300 سؤال</title>
+    <title>Sba3 Fwazer Ultimate</title>
     <style>
         :root { --bg: #0f0c29; --accent: #ff4757; --card: #1e1e2f; }
-        body { font-family: sans-serif; background: var(--bg); color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .app { width: 90%; max-width: 600px; background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        button { padding: 15px; border-radius: 10px; border: none; background: #353b48; color: white; cursor: pointer; transition: 0.3s; }
-        button:hover { background: var(--accent); }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg); color: white; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+        .container { width: 90%; max-width: 600px; background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); text-align: center; }
         .hidden { display: none; }
-        #timer { font-size: 50px; color: var(--accent); font-weight: bold; }
+        button { padding: 15px 25px; margin: 10px; border-radius: 10px; border: none; cursor: pointer; background: #353b48; color: white; transition: 0.3s; font-size: 16px; }
+        button:hover { background: var(--accent); }
+        .q-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        #timer { font-size: 40px; color: var(--accent); margin: 20px 0; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="app">
-    <div id="setup">
-        <h1>Sba3 Fwazer Pro</h1>
-        <input id="t1" placeholder="اسم الفريق 1" style="padding:10px; width:80%">
-        <input id="t2" placeholder="اسم الفريق 2" style="padding:10px; width:80%; margin-top:10px">
+<div class="container">
+    <div id="start">
+        <h1>🎮 Sba3 Fwazer Pro</h1>
+        <input id="p1" placeholder="اسم الفريق 1" style="padding:10px; width:80%"><br>
+        <input id="p2" placeholder="اسم الفريق 2" style="padding:10px; width:80%; margin-top:10px"><br>
         <button onclick="startGame()" style="width:85%; margin-top:20px; background:var(--accent)">ابدأ التحدي (12 نقطة للفوز)</button>
     </div>
 
     <div id="game" class="hidden">
-        <div style="display:flex; justify-content:space-between;">
+        <div style="display:flex; justify-content:space-between; font-size: 18px; font-weight: bold;">
             <div id="s1">الفريق 1: 0</div>
             <div id="s2">الفريق 2: 0</div>
         </div>
         <div id="timer">15</div>
         <h2 id="q">اختر القسم</h2>
-        <div id="cats" class="grid">
+        <div id="cats" class="q-grid">
             <button onclick="selectCat('cars')">🚗 سيارات</button>
             <button onclick="selectCat('anime')">⛩️ أنمي</button>
             <button onclick="selectCat('cartoons')">📺 كرتون</button>
@@ -39,38 +39,58 @@
             <button onclick="selectCat('games')">🎮 ألعاب</button>
             <button onclick="selectCat('history')">📜 تاريخ</button>
         </div>
-        <div id="ans" class="grid"></div>
+        <div id="ans" class="q-grid"></div>
     </div>
 </div>
 
 <script>
-    // هذه قاعدة بيانات الأسئلة - هنا تضيف الـ 300 سؤال
+    // قاعدة بيانات الأسئلة - أضفت لك أسئلة متنوعة كبداية قوية
     const db = {
         cars: [
-            {q: "ما هي أسرع سيارة في العالم؟", o: ["Bugatti", "Ferrari", "Toyota"], a: "Bugatti"},
-            // أضف هنا بقية الـ 50 سؤال الخاصة بالسيارات
+            {q: "ما هي أسرع سيارة إنتاج تجاري في العالم؟", o: ["بوجاتي", "فيراري", "تويوتا"], a: "بوجاتي"},
+            {q: "ما هي الشركة التي تنتج طراز 'موستانج'؟", o: ["فورد", "هوندا", "كيا"], a: "فورد"},
+            {q: "ما هو رمز مرسيدس؟", o: ["نجمة ثلاثية", "حلقة", "ثور"], a: "نجمة ثلاثية"}
         ],
         anime: [
             {q: "من هو بطل ون بيس؟", o: ["لوفي", "زورو", "سانجي"], a: "لوفي"},
-            // أضف هنا بقية الـ 50 سؤال الخاصة بالأنمي
+            {q: "ما اسم السيوف في ناروتو؟", o: ["كاتانا", "لا يوجد", "سيوف نينجا"], a: "كاتانا"},
+            {q: "ما اسم الكوكب الذي ولد فيه غوكو؟", o: ["فيجيتا", "سيايان", "الأرض"], a: "سيايان"}
         ],
-        // ... (كرر نفس الهيكلة لباقي الأقسام)
+        cartoons: [
+            {q: "من هو العدو الدائم لتوم؟", o: ["جيري", "سبايك", "بوتين"], a: "جيري"},
+            {q: "ما اسم الكلب في سكوبي دو؟", o: ["سكوبي", "روكسي", "جاك"], a: "سكوبي"},
+            {q: "كم عدد السنافر؟", o: ["100", "كثير", "50"], a: "كثير"}
+        ],
+        sports: [
+            {q: "كم عدد لاعبي فريق كرة القدم؟", o: ["11", "10", "9"], a: "11"},
+            {q: "أين أقيم كأس العالم 2022؟", o: ["قطر", "السعودية", "البرازيل"], a: "قطر"},
+            {q: "من هو اللاعب الملقب بالدون؟", o: ["رونالدو", "ميسي", "نيمار"], a: "رونالدو"}
+        ],
+        games: [
+            {q: "ما هي اللعبة الأكثر مبيعاً في التاريخ؟", o: ["Minecraft", "GTA V", "Tetris"], a: "Minecraft"},
+            {q: "ما هو بطل لعبة ليج أوف ليجيندز؟", o: ["ياسو", "جينكس", "تيمو"], a: "ياسو"},
+            {q: "ما اسم الشركة المطورة للعبة فورتنايت؟", o: ["Epic Games", "EA", "Ubisoft"], a: "Epic Games"}
+        ],
+        history: [
+            {q: "متى تأسست الدولة السعودية الأولى؟", o: ["1744", "1932", "1800"], a: "1744"},
+            {q: "من الذي اكتشف أمريكا؟", o: ["كولومبوس", "ماجلان", "نيوتن"], a: "كولومبوس"},
+            {q: "كم استمرت الحرب العالمية الثانية؟", o: ["6 سنوات", "4 سنوات", "10 سنوات"], a: "6 سنوات"}
+        ]
     };
 
-    let game = { t1: 0, t2: 0, turn: 1, timer: 15, interval: null, activeCat: '' };
-
-    function shuffle(array) { return array.sort(() => Math.random() - 0.5); }
+    let game = { p1: "", p2: "", s1: 0, s2: 0, turn: 1, timer: 15, interval: null };
 
     function startGame() {
-        document.getElementById('setup').classList.add('hidden');
+        game.p1 = document.getElementById('p1').value || "الفريق 1";
+        game.p2 = document.getElementById('p2').value || "الفريق 2";
+        document.getElementById('start').classList.add('hidden');
         document.getElementById('game').classList.remove('hidden');
     }
 
     function selectCat(cat) {
-        game.activeCat = cat;
-        // خلط الأسئلة عند اختيار القسم
-        const pool = shuffle([...db[cat]]);
-        const q = pool.pop(); // سحب سؤال عشوائي
+        // خلط الأسئلة واختيار واحد عشوائي
+        const pool = [...db[cat]].sort(() => Math.random() - 0.5);
+        const q = pool[0];
         
         document.getElementById('cats').classList.add('hidden');
         document.getElementById('q').innerText = q.q;
@@ -99,11 +119,11 @@
     function check(ans, correct) {
         clearInterval(game.interval);
         if(ans === correct) {
-            if(game.turn === 1) game.t1++; else game.t2++;
-            document.getElementById('s1').innerText = "الفريق 1: " + game.t1;
-            document.getElementById('s2').innerText = "الفريق 2: " + game.t2;
+            if(game.turn === 1) game.s1++; else game.s2++;
+            document.getElementById('s1').innerText = game.p1 + ": " + game.s1;
+            document.getElementById('s2').innerText = game.p2 + ": " + game.s2;
         }
-        if(game.t1 >= 12 || game.t2 >= 12) return alert("🏆 فاز الفريق!");
+        if(game.s1 >= 12 || game.s2 >= 12) return alert("🏆 فاز الفريق بـ 12 نقطة!");
         nextTurn();
     }
 
